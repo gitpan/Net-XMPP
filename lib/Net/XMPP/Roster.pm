@@ -208,17 +208,23 @@ handler(packet) - Take either a Net::XMPP::IQ or Net::XMPP::Presence
 
 =head1 AUTHOR
 
-Ryan Eatmon
+Originally authored by Ryan Eatmon.
+
+Previously maintained by Eric Hacker. 
+
+Currently maintained by Darian Anthony Patrick.
 
 =head1 COPYRIGHT
 
 This module is free software, you can redistribute it and/or modify it
-under the LGPL.
+under the LGPL 2.1.
 
 =cut
 
 use strict;
 use Carp;
+
+use Net::XMPP::JID;
 
 sub new
 {
@@ -268,7 +274,7 @@ sub add
     my $self = shift;
     my ($jid,%item) = @_;
 
-    $jid = $jid->GetJID() if $jid->isa("Net::XMPP::JID");
+    $jid = $jid->GetJID() if (ref $jid && $jid->isa('Net::XMPP::JID'));
 
     $self->{JIDS}->{$jid} = \%item;
 
@@ -295,7 +301,7 @@ sub addResource
     my $resource = shift;
     my (%item) = @_;
 
-    $jid = $jid->GetJID() if $jid->isa("Net::XMPP::JID");
+    $jid = $jid->GetJID() if (ref $jid && $jid->isa('Net::XMPP::JID'));
 
     my $priority = $item{priority};
     $priority = 0 unless defined($priority);
@@ -349,7 +355,7 @@ sub exists
     my $self = shift;
     my ($jid) = @_;
 
-    $jid = $jid->GetJID() if $jid->isa("Net::XMPP::JID");
+    $jid = $jid->GetJID() if (ref $jid && $jid->isa('Net::XMPP::JID'));
 
     return unless exists($self->{JIDS});
     return unless exists($self->{JIDS}->{$jid});
@@ -426,7 +432,7 @@ sub handleIQ
     my $self = shift;
     my $iq = shift;
 
-    print "handleIQ: iq(",$iq->GetXML(),")\n";
+    $self->{CONNECTION}->{DEBUG}->Log3('handleIQ: iq(' . $iq->GetXML() . ')');
 
     my $type = $iq->GetType();
     return unless (($type eq "set") || ($type eq "result"));
@@ -464,7 +470,7 @@ sub handlePresence
     my $self = shift;
     my $presence = shift;
 
-    print "handlePresence: presence(",$presence->GetXML(),")\n";
+    $self->{CONNECTION}->{DEBUG}->Log3('handlePresence: presence(' . $presence->GetXML() . ')');
 
     my $type = $presence->GetType();
     $type = "" unless defined($type);
@@ -561,7 +567,7 @@ sub online
     my $self = shift;
     my $jid = shift;
 
-    $jid = $jid->GetJID() if $jid->isa("Net::XMPP::JID");
+    $jid = $jid->GetJID() if (ref $jid && $jid->isa('Net::XMPP::JID'));
 
     return unless $self->exists($jid);
 
@@ -583,7 +589,7 @@ sub priority
     my $jid = shift;
     my $resource = shift;
 
-    $jid = $jid->GetJID() if $jid->isa("Net::XMPP::JID");
+    $jid = $jid->GetJID() if (ref $jid && $jid->isa('Net::XMPP::JID'));
 
     if (defined($resource))
     {
@@ -609,7 +615,7 @@ sub query
     my $jid = shift;
     my $key = shift;
 
-    $jid = $jid->GetJID() if $jid->isa("Net::XMPP::JID");
+    $jid = $jid->GetJID() if (ref $jid && $jid->isa('Net::XMPP::JID'));
 
     return unless $self->exists($jid);
     if (defined($key))
@@ -631,7 +637,7 @@ sub remove
     my $self = shift;
     my $jid = shift;
 
-    $jid = $jid->GetJID() if $jid->isa("Net::XMPP::JID");
+    $jid = $jid->GetJID() if (ref $jid && $jid->isa('Net::XMPP::JID'));
 
     if ($self->exists($jid))
     {
@@ -666,7 +672,7 @@ sub removeResource
     my $jid = shift;
     my $resource = shift;
 
-    $jid = $jid->GetJID() if $jid->isa("Net::XMPP::JID");
+    $jid = $jid->GetJID() if (ref $jid && $jid->isa('Net::XMPP::JID'));
 
     if ($self->resourceExists($jid,$resource))
     {
@@ -707,7 +713,7 @@ sub resource
     my $self = shift;
     my $jid = shift;
 
-    $jid = $jid->GetJID() if $jid->isa("Net::XMPP::JID");
+    $jid = $jid->GetJID() if (ref $jid && $jid->isa('Net::XMPP::JID'));
 
     return unless $self->exists($jid);
 
@@ -730,7 +736,7 @@ sub resourceExists
     my $jid = shift;
     my $resource = shift;
 
-    $jid = $jid->GetJID() if $jid->isa("Net::XMPP::JID");
+    $jid = $jid->GetJID() if (ref $jid && $jid->isa('Net::XMPP::JID'));
 
     return unless $self->exists($jid);
     return unless exists($self->{JIDS}->{$jid}->{resources});
@@ -751,7 +757,7 @@ sub resourceQuery
     my $resource = shift;
     my $key = shift;
 
-    $jid = $jid->GetJID() if $jid->isa("Net::XMPP::JID");
+    $jid = $jid->GetJID() if (ref $jid && $jid->isa('Net::XMPP::JID'));
 
     return unless $self->resourceExists($jid,$resource);
     if (defined($key))
@@ -773,7 +779,7 @@ sub resources
     my $self = shift;
     my $jid = shift;
 
-    $jid = $jid->GetJID() if $jid->isa("Net::XMPP::JID");
+    $jid = $jid->GetJID() if (ref $jid && $jid->isa('Net::XMPP::JID'));
 
     return () unless $self->exists($jid);
 
@@ -806,7 +812,7 @@ sub resourceStore
     my $key = shift;
     my $value = shift;
 
-    $jid = $jid->GetJID() if $jid->isa("Net::XMPP::JID");
+    $jid = $jid->GetJID() if (ref $jid && $jid->isa('Net::XMPP::JID'));
 
     return unless defined($key);
     return unless defined($value);
@@ -830,7 +836,7 @@ sub store
     my $key = shift;
     my $value = shift;
 
-    $jid = $jid->GetJID() if $jid->isa("Net::XMPP::JID");
+    $jid = $jid->GetJID() if (ref $jid && $jid->isa('Net::XMPP::JID'));
 
     return unless defined($key);
     return unless defined($value);

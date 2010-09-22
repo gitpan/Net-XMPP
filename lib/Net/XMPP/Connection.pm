@@ -38,19 +38,27 @@ Net::XMPP::Connection - XMPP Connection Module
 
 =head1 AUTHOR
 
-Ryan Eatmon
+Originally authored by Ryan Eatmon.
+
+Previously maintained by Eric Hacker. 
+
+Currently maintained by Darian Anthony Patrick.
 
 =head1 COPYRIGHT
 
 This module is free software, you can redistribute it and/or modify it
-under the LGPL.
+under the LGPL 2.1.
 
 =cut
 
 use strict;
 use Carp;
-use base qw( Net::XMPP::Protocol );
 
+use XML::Stream;
+use Net::XMPP::Debug;
+use Net::XMPP::Protocol;
+
+use base qw( Net::XMPP::Protocol );
 
 sub new
 {
@@ -140,10 +148,25 @@ sub Connect
                     namespace      => $self->{SERVER}->{namespace},
                     connectiontype => $self->{SERVER}->{connectiontype},
                     timeout        => $self->{SERVER}->{timeout},
+                    ( defined $self->{SERVER}->{ssl_ca_path}
+                        && '' ne $self->{SERVER}->{ssl_ca_path}
+                        ? (ssl_ca_path =>  $self->{SERVER}->{ssl_ca_path})
+                        : ()
+                    ),
+                    ( defined $self->{SERVER}->{ssl_verify}
+                        && '' ne $self->{SERVER}->{ssl_verify}
+                        ? (ssl_verify => $self->{SERVER}->{ssl_verify})
+                        : ()
+                    ),
                     ssl            => $self->{SERVER}->{ssl}, #LEGACY
-                    (defined($self->{SERVER}->{componentname}) ?
-                     (to => $self->{SERVER}->{componentname}) :
-                     ()
+                    _tls           => $self->{SERVER}->{tls},
+                    ( defined $self->{SERVER}->{componentname}
+                        ? (to => $self->{SERVER}->{componentname})
+                        : ()
+                    ),
+                    ( defined $self->{SERVER}->{srv}
+                        ? (srv => '_xmpp-client._tcp')
+                        : ()
                     ),
                    );
 

@@ -110,12 +110,16 @@ Net::XMPP::Debug - XMPP Debug Module
 
 =head1 AUTHOR
 
-Ryan Eatmon
+Originally authored by Ryan Eatmon.
+
+Previously maintained by Eric Hacker. 
+
+Currently maintained by Darian Anthony Patrick.
 
 =head1 COPYRIGHT
 
 This module is free software, you can redistribute it and/or modify it
-under the LGPL.
+under the LGPL 2.1.
 
 =cut
 
@@ -151,7 +155,7 @@ sub Init
     my %args;
     while($#_ >= 0) { $args{ lc pop(@_) } = pop(@_); }
 
-    delete($args{file}) if (lc($args{file}) eq "stdout");
+    delete($args{file}) if (defined $args{file} && lc($args{file}) eq "stdout");
 
     $args{time} = 0 if !exists($args{time});
     $args{setdefault} = 0 if !exists($args{setdefault});

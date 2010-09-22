@@ -201,17 +201,24 @@ Net::XMPP::Stanza - XMPP Stanza Module
 
 =head1 AUTHOR
 
-Ryan Eatmon
+Originally authored by Ryan Eatmon.
+
+Previously maintained by Eric Hacker. 
+
+Currently maintained by Darian Anthony Patrick.
 
 =head1 COPYRIGHT
 
 This module is free software, you can redistribute it and/or modify it
-under the LGPL.
+under the LGPL 2.1.
 
 =cut
 
 use strict;
 use Carp;
+use XML::Stream 1.22 qw( Node );
+use Net::XMPP::JID;
+use Net::XMPP::Debug;
 use Net::XMPP::Namespaces;
 use vars qw( $AUTOLOAD %FUNCTIONS $DEBUG );
 

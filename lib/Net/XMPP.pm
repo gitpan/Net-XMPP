@@ -198,35 +198,36 @@ Net::XMPP - XMPP Perl Library
 
 =head1 AUTHOR
 
-Ryan Eatmon
-Currently maintained by Eric Hacker.
+Originally authored by Ryan Eatmon.
+
+Previously maintained by Eric Hacker. 
+
+Currently maintained by Darian Anthony Patrick.
 
 =head1 BUGS
 
-Probably. There is at least one issue with XLM::Stream providing different node
-structures depending on how the node is created. Net::XMPP should now be able to
-handle this, but who knows what else lurks.
+See unpatched issues at L<https://rt.cpan.org/Dist/Display.html?Queue=Net-XMPP>.
+
+There is at least one issue with L<XML::Stream|XML::Stream> providing different
+node structures depending on how the node is created. Net::XMPP 
+should now be able to handle this, but who knows what else lurks.
 
 =head1 COPYRIGHT
 
 This module is free software, you can redistribute it and/or modify it
-under the LGPL.
+under the LGPL 2.1.
 
 =cut
 
 require 5.005;
 use strict;
-use XML::Stream 1.22 qw( Node );
 use Time::Local;
-use Carp;
-use Digest::SHA1;
-use Authen::SASL;
-use MIME::Base64;
 use POSIX;
 use vars qw( $AUTOLOAD $VERSION $PARSING );
 
-$VERSION = "1.02";
+$VERSION = "1.02_01";
 
+use XML::Stream;
 use Net::XMPP::Debug;
 use Net::XMPP::JID;
 use Net::XMPP::Namespaces;

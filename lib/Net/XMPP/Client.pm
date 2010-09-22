@@ -60,7 +60,7 @@ Net::XMPP::Client - XMPP Client Module
     $Con->Execute(hostname=>"jabber.org",
                   username=>"bob",
                   password=>"XXXX",
-                  resource=>"Work'
+                  resource=>"Work"
                  );
 
     #
@@ -86,9 +86,9 @@ Net::XMPP::Client - XMPP Client Module
             port=>integer,           listed in the hostname (default
             timeout=>int             localhost), on the port (default
             connectiontype=>string,  5222) listed, using the
-            tls=>0|1)                connectiontype listed (default
-                                     tcpip).  The two connection types
-                                     available are:
+            tls=>0|1,                connectiontype listed (default
+            srv=>0|1,                tcpip).  The two connection types
+            componentname=>string)   available are:
                                        tcpip  standard TCP socket
                                        http   TCP socket, but with the
                                               headers needed to talk
@@ -96,6 +96,20 @@ Net::XMPP::Client - XMPP Client Module
                                      If you specify tls, then it TLS
                                      will be used if it is available
                                      as a feature.
+
+                                     If srv is specified AND Net::DNS is
+                                     installed and can be loaded, then
+                                     an SRV query is sent to srv.hostname
+                                     and the results processed to replace
+                                     the hostname and port.  If the lookup
+                                     fails, or Net::DNS cannot be loaded,
+                                     then hostname and port are left alone
+                                     as the defaults.
+                                     
+                                     Alternatively, you may manually specify
+                                     componentname as the domain portion of the
+                                     jid and leave hostname set to the actual
+                                     hostname of the XMPP server.
 
     Execute(hostname=>string,       - Generic inner loop to handle
             port=>int,                connecting to the server, calling
@@ -168,12 +182,16 @@ Net::XMPP::Client - XMPP Client Module
 
 =head1 AUTHOR
 
-Ryan Eatmon
+Originally authored by Ryan Eatmon.
+
+Previously maintained by Eric Hacker. 
+
+Currently maintained by Darian Anthony Patrick.
 
 =head1 COPYRIGHT
 
 This module is free software, you can redistribute it and/or modify it
-under the LGPL.
+under the LGPL 2.1.
 
 =cut
 

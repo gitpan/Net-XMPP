@@ -756,15 +756,27 @@ Net::XMPP::Protocol - XMPP Protocol Module
 
 =head1 AUTHOR
 
-Ryan Eatmon
+Originally authored by Ryan Eatmon.
+
+Previously maintained by Eric Hacker. 
+
+Currently maintained by Darian Anthony Patrick.
 
 =head1 COPYRIGHT
 
 This module is free software, you can redistribute it and/or modify it
-under the LGPL.
+under the LGPL 2.1.
 
 =cut
 
+use Digest::SHA1;
+use MIME::Base64;
+use Authen::SASL;
+use XML::Stream;
+use Net::XMPP::IQ;
+use Net::XMPP::Message;
+use Net::XMPP::Presence;
+use Net::XMPP::JID;
 use Net::XMPP::Roster;
 use Net::XMPP::PrivacyLists;
 use strict;
@@ -1648,7 +1660,7 @@ sub PresenceDBDelete
     my ($jid) = @_;
 
     my $indexJID = $jid;
-    $indexJID = $jid->GetJID() if $jid->isa("Net::XMPP::JID");
+    $indexJID = $jid->GetJID() if (ref $jid && $jid->isa('Net::XMPP::JID'));
 
     return if !exists($self->{PRESENCEDB}->{$indexJID});
     delete($self->{PRESENCEDB}->{$indexJID});
@@ -1687,7 +1699,7 @@ sub PresenceDBQuery
     my ($jid) = @_;
 
     my $indexJID = $jid;
-    $indexJID = $jid->GetJID() if $jid->isa("Net::XMPP::JID");
+    $indexJID = $jid->GetJID() if (ref $jid && $jid->isa('Net::XMPP::JID'));
 
     return if !exists($self->{PRESENCEDB}->{$indexJID});
     return if (scalar(keys(%{$self->{PRESENCEDB}->{$indexJID}->{priorities}})) == 0);
@@ -1711,7 +1723,7 @@ sub PresenceDBResources
     my ($jid) = @_;
 
     my $indexJID = $jid;
-    $indexJID = $jid->GetJID() if $jid->isa("Net::XMPP::JID");
+    $indexJID = $jid->GetJID() if (ref $jid && $jid->isa('Net::XMPP::JID'));
 
     my @resources;
 
@@ -2468,7 +2480,7 @@ sub RosterDBExists
     my $self = shift;
     my ($jid) = @_;
 
-    if ($jid->isa("Net::XMPP::JID"))
+    if (ref $jid && $jid->isa('Net::XMPP::JID'))
     {
         $jid = $jid->GetJID();
     }
@@ -2636,7 +2648,7 @@ sub RosterDBQuery
     my $jid = shift;
     my $key = shift;
 
-    if ($jid->isa("Net::XMPP::JID"))
+    if (ref $jid && $jid->isa('Net::XMPP::JID'))
     {
         $jid = $jid->GetJID();
     }
